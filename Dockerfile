@@ -23,6 +23,9 @@ RUN wget -O /tmp/wkhtmltox_0.12.6-1.focal_amd64.deb https://github.com/wkhtmltop
     && apt -f install -y /tmp/wkhtmltox_0.12.6-1.focal_amd64.deb \
     && rm /tmp/wkhtmltox_0.12.6-1.focal_amd64.deb
 
+RUN apt install -y fonts-roboto \
+    && fc-cache -f -v
+
 USER odoo
 ENTRYPOINT [ "/usr/bin/odoo"]
 CMD [ "server" ]
