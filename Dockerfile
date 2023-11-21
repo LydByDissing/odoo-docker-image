@@ -6,10 +6,10 @@ RUN apt update \
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt install -y tzdata
 
-RUN curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg \
-    && sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/jammy pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update' \
-    && apt install -y pgadmin4 \
-    && apt upgrade -y
+#RUN curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg \
+#    && sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/jammy pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update' \
+#    && apt install -y pgadmin4 \
+#    && apt upgrade -y
 
 RUN  wget -q -O - https://nightly.odoo.com/odoo.key | gpg --dearmor -o /usr/share/keyrings/odoo-archive-keyring.gpg \
      && echo 'deb [signed-by=/usr/share/keyrings/odoo-archive-keyring.gpg] https://nightly.odoo.com/17.0/nightly/deb/ ./' | tee /etc/apt/sources.list.d/odoo.list \
@@ -25,6 +25,13 @@ RUN wget -O /tmp/wkhtmltox_0.12.6-1.focal_amd64.deb https://github.com/wkhtmltop
 
 RUN apt install -y fonts-roboto \
     && fc-cache -f -v
+
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+    && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+    && apt update \
+    && apt-get autoremove -y --purge postgresql-client-14 postgresql-client-common postgresql-common \
+    && apt install -y postgresql-client-15
 
 USER odoo
 ENTRYPOINT [ "/usr/bin/odoo"]
